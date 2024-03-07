@@ -1,5 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using WebAPIDemo.Models;
+using WebAPIDemo.Models.Repositories;
 
 namespace WebAPIDemo.Controllers
 {
@@ -7,6 +9,7 @@ namespace WebAPIDemo.Controllers
     [Route("api/[controller]")]
     public class BikesController : ControllerBase
     {
+
         [HttpGet]
         public String GetBikes()
         {
@@ -14,13 +17,22 @@ namespace WebAPIDemo.Controllers
         }
 
         [HttpGet("{id}")]
-        public String GetBikeByID(int id)
+        public IActionResult GetBikeByID(int id)
         {
-            return $"Trả về xe có id: {id}";
+            if(id < 1)
+            {
+                return BadRequest();
+            }
+            var Bike = BikeRepository.GetBikeById(id);
+            if(Bike == null)
+            {
+                return NotFound();
+            }
+            return Ok(Bike);
         }
 
         [HttpPost]
-        public String CreatingBike()
+        public String CreatingBike([FromForm] Bike bike)
         {
             return $"Thêm mới thông tin của xe";
         }
